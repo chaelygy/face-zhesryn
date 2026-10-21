@@ -1,19 +1,33 @@
 FROM python:3.11-slim
 
-WORKDIR /app
-
+# Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgl1-mesa-glx \
+    libgl1 \
     libglib2.0-0 \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
+# Hugging Face Spaces runs as user 1000
+RUN useradd -m -u 1000 user
+ENV HOME=/home/user \
+    PATH=/home/user/.local/bin:$PATH \
+    PYTHONUNBUFFERED=1 \
+    PORT=7860
+
+WORKDIR /app
+
+# Install Python dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+# Copy source code and encodings
+COPY --chown=user:user . /app
+RUN chown -R user:user /home/user /app
 
-EXPOSE 5000
+USER user
 
-ENV PYTHONUNBUFFERED=1
+EXPOSE 7860
 
 CMD ["python", "app.py"]
+
