@@ -12,7 +12,7 @@
 
 // ─── Configuration ───
 // URL Backend Cloud publik (Hugging Face Spaces atau Cloudflare Tunnel)
-const CLOUD_BACKEND_URL = 'https://shaw-sequences-time-how.trycloudflare.com';
+const CLOUD_BACKEND_URL = 'https://keyboard-settlement-theoretical-connect.trycloudflare.com';
 
 const isVercel = Boolean(window.location.origin && window.location.origin.includes('vercel.app'));
 let defaultApi = 'http://localhost:5000';
