@@ -12,7 +12,7 @@
 
 // ─── Configuration ───
 // URL Backend Cloud publik (Cloudflare Tunnel aktif ke server AI lokal)
-const CLOUD_BACKEND_URL = 'https://tobacco-procurement-rochester-hugh.trycloudflare.com';
+const CLOUD_BACKEND_URL = 'https://twisted-discount-erp-gem.trycloudflare.com';
 
 const customApi = localStorage.getItem('faceid_backend_url');
 let defaultApi = 'http://localhost:5000';
