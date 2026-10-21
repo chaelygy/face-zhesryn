@@ -1,15 +1,13 @@
 {
-  "version": 2,
-  "public": true,
   "cleanUrls": true,
-  "routes": [
+  "rewrites": [
     {
-      "src": "/",
-      "dest": "/static/index.html"
+      "source": "/",
+      "destination": "/static/index.html"
     },
     {
-      "src": "/(.*)",
-      "dest": "/static/$1"
+      "source": "/(.*)",
+      "destination": "/static/$1"
     }
   ]
 }
