@@ -31,6 +31,10 @@ const WEBCAM_INTERVAL_MS = 1500;  // Kirim frame setiap 1.5 detik
 const JPEG_QUALITY = 0.85;
 
 function configureServerUrl() {
+    if (isVercel) {
+        // Jangan pernah munculkan prompt konfigurasi di domain Vercel untuk dosen
+        return;
+    }
     const current = localStorage.getItem('faceid_backend_url') || API_BASE;
     const input = prompt(
         "Pengaturan URL Backend Server API:\n" +
