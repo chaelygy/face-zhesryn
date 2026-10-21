@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sistem Pengenalan Wajah Real-Time menggunakan DeepFace Facenet512 - Akurasi Tinggi >95%">
+    <title>Face Recognition System | Pengenalan Wajah</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Animated Background Particles -->
+    <div class="bg-particles" id="particles"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-brand">
+            <div class="nav-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 3H5a2 2 0 0 0-2 2v4"/>
+                    <path d="M15 3h4a2 2 0 0 1 2 2v4"/>
+                    <path d="M9 21H5a2 2 0 0 1-2-2v-4"/>
+                    <path d="M15 21h4a2 2 0 0 0 2-2v-4"/>
+                    <circle cx="12" cy="10" r="3"/>
+                    <path d="M7 16.5c0-2.5 2.2-4.5 5-4.5s5 2 5 4.5"/>
+                </svg>
+            </div>
+            <span class="nav-title">FaceID<span class="accent">Pro</span></span>
+        </div>
+        <div class="nav-status" id="navStatus" style="cursor: pointer;" title="Klik untuk mengatur URL Server API" onclick="configureServerUrl()">
+            <span class="status-dot offline"></span>
+            <span class="status-text">Menghubungkan...</span>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero-section" id="heroSection">
+            <div class="hero-badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                DEEP LEARNING POWERED
+            </div>
+            <h1 class="hero-title">
+                Sistem Pengenalan
+                <span class="gradient-text">Wajah</span>
+            </h1>
+            <p class="hero-subtitle">
+                Real-time facial recognition menggunakan <strong>DeepFace Facenet512</strong> 
+                dengan akurasi &gt;95%. Deteksi & identifikasi wajah secara instan.
+            </p>
+            <div class="hero-stats" id="heroStats">
+                <div class="stat-card">
+                    <span class="stat-number" id="statPersons">-</span>
+                    <span class="stat-label">Orang Terdaftar</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">&gt;95%</span>
+                    <span class="stat-label">Akurasi</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">512D</span>
+                    <span class="stat-label">Embedding</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mode Selection -->
+        <section class="mode-section">
+            <div class="mode-cards">
+                <button class="mode-card active" id="btnWebcam" onclick="switchMode('webcam')">
+                    <div class="mode-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M23 7l-7 5 7 5V7z"/>
+                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                        </svg>
+                    </div>
+                    <span class="mode-title">Webcam Live</span>
+                    <span class="mode-desc">Deteksi real-time</span>
+                </button>
+                <button class="mode-card" id="btnUpload" onclick="switchMode('upload')">
+                    <div class="mode-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                    </div>
+                    <span class="mode-title">Upload Foto</span>
+                    <span class="mode-desc">Analisis gambar</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Recognition Area -->
+        <section class="recognition-section">
+            <div class="recognition-grid">
+                <!-- Video/Image Panel -->
+                <div class="panel video-panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            <span id="panelTitle">Kamera</span>
+                        </h2>
+                        <div class="panel-controls" id="webcamControls">
+                            <button class="btn-control" id="btnStartCam" onclick="startWebcam()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <polygon points="5 3 19 12 5 21 5 3"/>
+                                </svg>
+                                Mulai
+                            </button>
+                            <button class="btn-control danger hidden" id="btnStopCam" onclick="stopWebcam()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <rect x="6" y="6" width="12" height="12" rx="1"/>
+                                </svg>
+                                Stop
+                            </button>
+                        </div>
+                    </div>
+                    <div class="video-container" id="videoContainer">
+                        <!-- Webcam Mode -->
+                        <div class="webcam-wrapper" id="webcamWrapper">
+                            <video id="webcamVideo" autoplay playsinline muted></video>
+                            <canvas id="overlayCanvas"></canvas>
+                            <div class="scan-line" id="scanLine"></div>
+                            <div class="video-placeholder" id="videoPlaceholder">
+                                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                                    <path d="M23 7l-7 5 7 5V7z"/>
+                                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                                </svg>
+                                <p>Klik "Mulai" untuk mengaktifkan kamera</p>
+                            </div>
+                        </div>
+                        <!-- Upload Mode -->
+                        <div class="upload-wrapper hidden" id="uploadWrapper">
+                            <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+                                <input type="file" id="fileInput" accept="image/*" onchange="handleFileUpload(event)" hidden>
+                                <div class="upload-icon">
+                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="17 8 12 3 7 8"/>
+                                        <line x1="12" y1="3" x2="12" y2="15"/>
+                                    </svg>
+                                </div>
+                                <p class="upload-text">Klik atau drag & drop foto di sini</p>
+                                <p class="upload-hint">JPG, PNG, WEBP • Max 10MB</p>
+                            </div>
+                            <div class="uploaded-preview hidden" id="uploadedPreview">
+                                <img id="uploadedImage" src="" alt="Uploaded">
+                                <canvas id="uploadOverlayCanvas"></canvas>
+                                <button class="btn-remove" onclick="removeUpload()">×</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Panel -->
+                <div class="panel results-panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                            Hasil Deteksi
+                        </h2>
+                        <span class="face-count" id="faceCount">0 wajah</span>
+                    </div>
+                    <div class="results-body">
+                        <!-- Processing indicator -->
+                        <div class="processing-indicator hidden" id="processingIndicator">
+                            <div class="spinner"></div>
+                            <span>Menganalisis wajah...</span>
+                        </div>
+                        
+                        <!-- Results list -->
+                        <div class="results-list" id="resultsList">
+                            <div class="empty-state" id="emptyState">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                                    <path d="M9 3H5a2 2 0 0 0-2 2v4"/>
+                                    <path d="M15 3h4a2 2 0 0 1 2 2v4"/>
+                                    <path d="M9 21H5a2 2 0 0 1-2-2v-4"/>
+                                    <path d="M15 21h4a2 2 0 0 0 2-2v-4"/>
+                                </svg>
+                                <p>Belum ada wajah terdeteksi</p>
+                                <span>Mulai kamera atau upload foto</span>
+                            </div>
+                        </div>
+
+                        <!-- Performance Stats -->
+                        <div class="perf-stats" id="perfStats">
+                            <div class="perf-item">
+                                <span class="perf-label">Waktu Proses</span>
+                                <span class="perf-value" id="perfTime">- ms</span>
+                            </div>
+                            <div class="perf-item">
+                                <span class="perf-label">Model</span>
+                                <span class="perf-value">Facenet512</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Registered Persons Section -->
+        <section class="persons-section">
+            <h2 class="section-title">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                Orang Terdaftar
+            </h2>
+            <div class="persons-grid" id="personsGrid">
+                <div class="loading-state">Memuat data...</div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Face Recognition System &copy; 2026 — Powered by <strong>DeepFace</strong> & <strong>Facenet512</strong></p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
