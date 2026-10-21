@@ -27,6 +27,9 @@ RUN chown -R user:user /home/user /app
 
 USER user
 
+# Pre-download Facenet512 model weights during build
+RUN python -c "from deepface import DeepFace; import numpy as np; DeepFace.represent(np.zeros((160, 160, 3), dtype=np.uint8), model_name='Facenet512', detector_backend='skip', enforce_detection=False)" || true
+
 EXPOSE 7860
 
 CMD ["python", "app.py"]

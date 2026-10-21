@@ -11,19 +11,21 @@
  */
 
 // ─── Configuration ───
-// URL Backend Cloud publik (Cloudflare Tunnel aktif ke server AI lokal)
+// URL Backend Cloud publik (Hugging Face Spaces atau Cloudflare Tunnel)
 const CLOUD_BACKEND_URL = 'https://shaw-sequences-time-how.trycloudflare.com';
 
-const customApi = localStorage.getItem('faceid_backend_url');
+const isVercel = Boolean(window.location.origin && window.location.origin.includes('vercel.app'));
 let defaultApi = 'http://localhost:5000';
 
-if (window.location.origin && window.location.origin.includes('vercel.app')) {
-    // Jika diakses dari domain Vercel, otomatis hubungkan langsung ke backend publik Cloudflare
+if (isVercel) {
+    // Jika diakses dari domain Vercel (misal di HP dosen), otomatis selalu gunakan backend cloud
     defaultApi = CLOUD_BACKEND_URL;
 } else if (window.location.origin && window.location.origin.startsWith('http')) {
     defaultApi = window.location.origin;
 }
 
+// Jangan biarkan localStorage merusak koneksi di Vercel/HP dosen
+const customApi = isVercel ? null : localStorage.getItem('faceid_backend_url');
 const API_BASE = (customApi ? customApi.replace(/\/$/, '') : defaultApi);
 const WEBCAM_INTERVAL_MS = 1500;  // Kirim frame setiap 1.5 detik
 const JPEG_QUALITY = 0.85;
