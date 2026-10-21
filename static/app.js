@@ -11,11 +11,19 @@
  */
 
 // ─── Configuration ───
-// Dukungan multi-hosting: ambil URL custom dari localStorage jika frontend di Vercel & backend di cloud/lokal
+// URL Backend Cloud publik (Cloudflare Tunnel aktif ke server AI lokal)
+const CLOUD_BACKEND_URL = 'https://tobacco-procurement-rochester-hugh.trycloudflare.com';
+
 const customApi = localStorage.getItem('faceid_backend_url');
-const defaultApi = (window.location.origin && window.location.origin.startsWith('http') && !window.location.origin.includes('vercel.app'))
-    ? window.location.origin
-    : 'http://localhost:5000';
+let defaultApi = 'http://localhost:5000';
+
+if (window.location.origin && window.location.origin.includes('vercel.app')) {
+    // Jika diakses dari domain Vercel, otomatis hubungkan langsung ke backend publik Cloudflare
+    defaultApi = CLOUD_BACKEND_URL;
+} else if (window.location.origin && window.location.origin.startsWith('http')) {
+    defaultApi = window.location.origin;
+}
+
 const API_BASE = (customApi ? customApi.replace(/\/$/, '') : defaultApi);
 const WEBCAM_INTERVAL_MS = 1500;  // Kirim frame setiap 1.5 detik
 const JPEG_QUALITY = 0.85;
